@@ -7,7 +7,7 @@ public class Percolation {
     private final WeightedQuickUnionUF UF;
     private final WeightedQuickUnionUF UF_full;
     private int openSite=0;
-    private int[] array;
+    private boolean[] array;
 
     private void checkIndex(int row, int col){
         if (row <= 0 || row > n) throw new IllegalArgumentException("row index row out of bounds");
@@ -25,11 +25,11 @@ public class Percolation {
         UF_full = new WeightedQuickUnionUF(n*n+1);
 
         // 0代表not open
-        array = new int[n*n+2];
+        array = new boolean[n*n+2];
         for (int i = 0;i < n*n+2 ;i++){
-            array[i] = 0;
+            array[i] = false;
         }
-        array[0] = 1;
+        array[0] = true;
         // array[n*n+1] = 1;
     }    // create n-by-n grid, with all sites blocked
 
@@ -69,8 +69,8 @@ public class Percolation {
             UF_full.union(n*(down-1)+col,index);
         }
 
-        if (array[index] != 1){
-            array[index] = 1;
+        if (array[index] != true){
+            array[index] = true;
             openSite ++;
         }
 
@@ -79,7 +79,7 @@ public class Percolation {
 
     public boolean isOpen(int row, int col){
         checkIndex(row,col);
-        return array[n*(row-1)+col] == 1;
+        return array[n*(row-1)+col] == true;
     }  // is site (row, col) open?
 
     public boolean isFull(int row, int col) {
