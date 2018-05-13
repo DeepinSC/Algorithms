@@ -3,10 +3,11 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     // 还是使用Quick Union，定义一维数组树
     // mmp有库
-    private int n;
-    private WeightedQuickUnionUF UF;
+    private final int n;
+    private final WeightedQuickUnionUF UF;
+    private final WeightedQuickUnionUF UF_full;
+    private int openSite=0;
     private int[] array;
-    private boolean showInfo = false;
 
     private void checkIndex(int row, int col){
         if (row <= 0 || row > n) throw new IllegalArgumentException("row index row out of bounds");
@@ -21,6 +22,7 @@ public class Percolation {
         this.n = n;
         // 0 代表上部， n*n+1 代表下部
         UF = new WeightedQuickUnionUF(n*n+2);
+        UF_full = new WeightedQuickUnionUF(n*n+1);
 
         // 0代表not open
         array = new int[n*n+2];
@@ -38,26 +40,25 @@ public class Percolation {
         int right = col + 1;
         int down = row + 1;
 
-        if (showInfo) System.out.println(up+","+left+","+down+","+right);
-
         int index = n*(row-1)+col;
 
         if (up == 0){
             UF.union(0,index);
+            UF_full.union(0,index);
         }
         else if (up > 0 && isOpen(up,col)){
             UF.union(n*(up-1)+col,index);
-            if (showInfo) System.out.println("Union: "+up+","+col);
+            UF_full.union(n*(up-1)+col,index);
         }
 
         if (left > 0 && isOpen(row,left)){
             UF.union(n*(row-1)+left,index);
-            if (showInfo) System.out.println("Union: "+row+","+left);
+            UF_full.union(n*(row-1)+left,index);
         }
 
         if (right <= n  && isOpen(row,right)){
             UF.union(n*(row-1)+right,index);
-            if (showInfo) System.out.println("Union: "+row+","+right);
+            UF_full.union(n*(row-1)+right,index);
         }
 
         if (down == n+1){
@@ -65,10 +66,14 @@ public class Percolation {
         }
         else if (down <= n && isOpen(down,col)){
             UF.union(n*(down-1)+col,index);
-            if (showInfo) System.out.println("Union: "+down+","+col);
+            UF_full.union(n*(down-1)+col,index);
         }
 
-        array[index] = 1;
+        if (array[index] != 1){
+            array[index] = 1;
+            openSite ++;
+        }
+
 
     }    // open site (row, col) if it is not open already
 
@@ -79,15 +84,11 @@ public class Percolation {
 
     public boolean isFull(int row, int col) {
         checkIndex(row,col);
-        return UF.connected(0, n*(row-1)+col);
+        return UF_full.connected(0, n*(row-1)+col);
     } // is site (row, col) full?
 
-    public int numberOfOpenSites() {
-        int count = 0;
-        for (int i = 1; i < n*n+2 ;i++){
-            if (array[i] == 1) count++;
-        }
-        return count;
+    public int numberOfOpenSites(){
+        return openSite;
     }    // number of open sites
     public boolean percolates(){
         return UF.connected(0, n*n+1);
@@ -95,7 +96,6 @@ public class Percolation {
 
     public static void main(String[] args){
         Percolation per = new Percolation(3);
-        // per.showInfo = true;
         per.open(1,2);
         per.open(2,1);
         System.out.println(per.isFull(2,1));
