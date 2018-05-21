@@ -57,7 +57,7 @@ public class Deque<Item> implements Iterable<Item> {
             throw new IllegalArgumentException("can not add null");
         }
         if (end.item==null){
-            end = new ListNode<>(item);
+            start = new ListNode<>(item);
             end = start;
             size++;
             return;
@@ -117,7 +117,7 @@ public class Deque<Item> implements Iterable<Item> {
                 }
                 current = start;
                 throw new NoSuchElementException("no next ele");*/
-                if (current == null){
+                if (current==null || current.item == null){
                     throw new NoSuchElementException("no next ele");
                 }
                 Item item = current.item;
@@ -126,7 +126,7 @@ public class Deque<Item> implements Iterable<Item> {
             }
             @Override
             public boolean hasNext(){
-                return current != null;
+                return current != null && current.item != null;
             }
             @Override
             public void remove() {
@@ -138,16 +138,19 @@ public class Deque<Item> implements Iterable<Item> {
     public static void main(String[] args) {
         Deque<Integer> deque = new Deque<>();
         System.out.println(deque.isEmpty());
-        deque.addFirst(1);
+        deque.addLast(1);
         System.out.println(deque.isEmpty());
-        deque.addFirst(2);
+        deque.removeFirst();
+        // Iterator<Integer> iter = deque.iterator();
+        // iter.next();
+        System.out.println(deque.size());
         System.out.println("---");
         for(int i : deque){
             System.out.println(i);
         }
         System.out.println("---");
-        System.out.println(deque.removeLast());
-        System.out.println(deque.removeFirst());
+        //System.out.println(deque.removeLast());
+        //System.out.println(deque.removeFirst());
         System.out.println(deque.isEmpty());
     }  // unit testing (optional)
 }

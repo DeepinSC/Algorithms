@@ -75,7 +75,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         size--;
 
         if (size <= queue.length/4){
-            resize(size);
+            resize(queue.length/2);
         }
         return item;
 
@@ -96,6 +96,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             private int[] array = StdRandom.permutation(size,size);
             @Override
             public Item next() {
+                if (current >=array.length){
+                    throw new NoSuchElementException("no next ele");
+                }
                 int index = array[current];
                 Item item = queue[start+index];
                 current++;
