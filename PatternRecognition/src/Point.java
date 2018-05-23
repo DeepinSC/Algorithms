@@ -47,6 +47,9 @@ public class Point implements Comparable<Point> {
      */
     public void drawTo(Point that) {
         /* DO NOT MODIFY */
+        if (that==null){
+            throw new IllegalArgumentException("point can not be null");
+        }
         StdDraw.line(this.x, this.y, that.x, that.y);
     }
 
@@ -63,6 +66,21 @@ public class Point implements Comparable<Point> {
      */
     public double slopeTo(Point that) {
         /* YOUR CODE HERE */
+        if (that==null){
+            throw new IllegalArgumentException("point can not be null");
+        }
+        if (this.x == that.x && this.y == that.y){
+            return Double.NEGATIVE_INFINITY;
+        }
+        else if (this.x == that.x){
+            return Double.POSITIVE_INFINITY;
+        }
+        else if (this.y == that.y){
+            return 0;
+        }
+        else {
+            return (that.y - this.y)/(that.x - this.x);
+        }
     }
 
     /**
@@ -77,8 +95,29 @@ public class Point implements Comparable<Point> {
      *         point; and a positive integer if this point is greater than the
      *         argument point
      */
+    @Override
     public int compareTo(Point that) {
         /* YOUR CODE HERE */
+        if (that==null){
+            throw new IllegalArgumentException("point can not be null");
+        }
+        if (this.y < that.y){
+            return -1;
+        }
+        else if (this.y > that.y){
+            return 1;
+        }
+        else {
+            if (this.x < that.x){
+                return -1;
+            }
+            else if (this.x > that.x){
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
     }
 
     /**
@@ -89,6 +128,22 @@ public class Point implements Comparable<Point> {
      */
     public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
+        class PointComparator implements Comparator<Point> {
+            @Override
+            public int compare(Point o1, Point o2) {
+                double slope1 = slopeTo(o1);
+                double slope2 = slopeTo(o2);
+
+                if (slope1 > slope2) {
+                    return 1;
+                }
+                else if (slope1 < slope2){
+                    return -1;
+                }
+                return 0;
+            }
+        }
+        return new PointComparator();
     }
 
 
@@ -110,5 +165,19 @@ public class Point implements Comparable<Point> {
      */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
+        Point p1 = new Point(4,5);
+
+        Point p2 = new Point(5,7);
+        Point p3 = new Point(4,8);
+        StdDraw.setXscale(0,10);
+        StdDraw.setYscale(0,10);
+        StdDraw.setPenRadius(.001);
+        StdDraw.point(4,5);
+        p1.draw();
+        p2.draw();
+        p3.draw();
+        p1.drawTo(p2);
+        p1.drawTo(p3);
+
     }
 }
