@@ -1,38 +1,60 @@
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class BruteCollinearPoints {
 
-    private void checkPointsHaveNull(Point[] points){
+    private void checkPointsHaveNullOrDup(Point[] points){
         if (points == null) { throw new IllegalArgumentException("input array is null"); }
         for (int i=0;i<points.length;i++){
+            // StdOut.println(points[i]);
             if (points[i] == null){
                 throw new IllegalArgumentException("contain null pointer");
+            }
+        }
+        Point[] newPoints = Arrays.copyOf(points,points.length);
+        Collections.sort(Arrays.asList(newPoints));
+        for (int i=0;i<newPoints.length;i++) {
+            if (i > 0 && newPoints[i].compareTo(newPoints[i - 1]) == 0) {
+                throw new IllegalArgumentException("contain duplicated pointers");
             }
         }
     }
 
     private Point[] points;
+    private LineSegment[] segments;
 
     public BruteCollinearPoints(Point[] points){
-        checkPointsHaveNull(points);
-        this.points = points;
-
-    }    // finds all line segments containing 4 points
-    public int numberOfSegments(){
-        return segments().length;
-    }        // the number of line segments
-    public LineSegment[] segments(){
+        checkPointsHaveNullOrDup(points);
+        this.points = Arrays.copyOf(points,points.length);
+        Collections.sort(Arrays.asList(this.points));
         ArrayList<LineSegment> arrayList = new ArrayList<>();
+        Comparator<Point> comparator = this.points[0].slopeOrder();
+        int start = -1;
+        int end = -1;
 
-        for (int i = 0; i < points.length - 3;i++){
-            for (int j = i+1; j < points.length - 2;j++){
-                for (int k = j+1; k < points.length - 1;k++){
-                    for (int l = k+1; l < points.length;l++){
-                        if(points[i].slopeTo(points[j])==points[i].slopeTo(points[k])
-                                && points[i].slopeTo(points[j])==points[i].slopeTo(points[l])){
-                            arrayList.add(new LineSegment(points[i],points[l]));
+        for (int i = 0; i < this.points.length - 3;i++){
+            for (int j = i+1; j < this.points.length - 2;j++){
+                for (int k = j+1; k < this.points.length - 1;k++){
+                    for (int l = k+1; l < this.points.length;l++){
+                        if(this.points[i].slopeTo(this.points[j])==this.points[i].slopeTo(this.points[k])
+                                && this.points[i].slopeTo(this.points[j])==this.points[i].slopeTo(this.points[l])){
+                            Point[] array = {this.points[i],this.points[j],this.points[k],this.points[l]};
+                            // Point max = Collections.max(Arrays.asList(array));
+                            // Point min = Collections.min(Arrays.asList(array));
+                            LineSegment e = new LineSegment(this.points[i],this.points[l]);
+                            if (i != start || l != end) {
+                                arrayList.add(e);
+                                start = i;
+                                end = l;
+                            }
                         }
                     }
+
+
                 }
             }
         }
@@ -40,6 +62,13 @@ public class BruteCollinearPoints {
         for (int i=0;i<arrayList.size();i++){
             lineSegments[i] = arrayList.get(i);
         }
-        return lineSegments;
+        this.segments = lineSegments;
+
+    }    // finds all line segments containing 4 points
+    public int numberOfSegments(){
+        return this.segments.length;
+    }        // the number of line segments
+    public LineSegment[] segments(){
+        return this.segments;
     }
 }

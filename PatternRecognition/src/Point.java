@@ -10,6 +10,7 @@
 
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
 
 public class Point implements Comparable<Point> {
 
@@ -67,7 +68,7 @@ public class Point implements Comparable<Point> {
     public double slopeTo(Point that) {
         /* YOUR CODE HERE */
         if (that==null){
-            throw new IllegalArgumentException("point can not be null");
+            throw new NullPointerException("point can not be null");
         }
         if (this.x == that.x && this.y == that.y){
             return Double.NEGATIVE_INFINITY;
@@ -79,7 +80,7 @@ public class Point implements Comparable<Point> {
             return 0;
         }
         else {
-            return (that.y - this.y)/(that.x - this.x);
+            return (double)(that.y - this.y)/(that.x - this.x);
         }
     }
 
@@ -98,9 +99,6 @@ public class Point implements Comparable<Point> {
     @Override
     public int compareTo(Point that) {
         /* YOUR CODE HERE */
-        if (that==null){
-            throw new IllegalArgumentException("point can not be null");
-        }
         if (this.y < that.y){
             return -1;
         }
@@ -131,6 +129,9 @@ public class Point implements Comparable<Point> {
         class PointComparator implements Comparator<Point> {
             @Override
             public int compare(Point o1, Point o2) {
+                if (o1==null || o2==null){
+                    throw new NullPointerException("point can not be null");
+                }
                 double slope1 = slopeTo(o1);
                 double slope2 = slopeTo(o2);
 
@@ -165,19 +166,15 @@ public class Point implements Comparable<Point> {
      */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
-        Point p1 = new Point(4,5);
+        Point p1 = new Point(19000,10000);
 
-        Point p2 = new Point(5,7);
+        Point p2 = new Point(1234,5678);
         Point p3 = new Point(4,8);
         StdDraw.setXscale(0,10);
         StdDraw.setYscale(0,10);
         StdDraw.setPenRadius(.001);
         StdDraw.point(4,5);
-        p1.draw();
-        p2.draw();
-        p3.draw();
-        p1.drawTo(p2);
-        p1.drawTo(p3);
+        StdOut.println(p1.slopeTo(p2));
 
     }
 }
