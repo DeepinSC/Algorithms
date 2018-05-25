@@ -26,6 +26,7 @@ public class TestFastClient {
 
         // print and draw the line segments
         FastCollinearPoints collinear = new FastCollinearPoints(points);
+        StdOut.println(collinear.segments()==collinear.segments());
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
             segment.draw();

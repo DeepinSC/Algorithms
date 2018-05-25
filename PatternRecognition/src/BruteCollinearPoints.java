@@ -25,13 +25,12 @@ public class BruteCollinearPoints {
     }
 
     private Point[] points;
-    private LineSegment[] segments;
+    private ArrayList<LineSegment> ls=new ArrayList<>();
 
     public BruteCollinearPoints(Point[] points){
         checkPointsHaveNullOrDup(points);
         this.points = Arrays.copyOf(points,points.length);
         Collections.sort(Arrays.asList(this.points));
-        ArrayList<LineSegment> arrayList = new ArrayList<>();
         Comparator<Point> comparator = this.points[0].slopeOrder();
         int start = -1;
         int end = -1;
@@ -47,7 +46,7 @@ public class BruteCollinearPoints {
                             // Point min = Collections.min(Arrays.asList(array));
                             LineSegment e = new LineSegment(this.points[i],this.points[l]);
                             if (i != start || l != end) {
-                                arrayList.add(e);
+                                ls.add(e);
                                 start = i;
                                 end = l;
                             }
@@ -58,17 +57,12 @@ public class BruteCollinearPoints {
                 }
             }
         }
-        LineSegment[] lineSegments = new LineSegment[arrayList.size()];
-        for (int i=0;i<arrayList.size();i++){
-            lineSegments[i] = arrayList.get(i);
-        }
-        this.segments = lineSegments;
 
     }    // finds all line segments containing 4 points
     public int numberOfSegments(){
-        return this.segments.length;
+        return this.ls.size();
     }        // the number of line segments
     public LineSegment[] segments(){
-        return this.segments;
+        return ls.toArray(new LineSegment[ls.size()]);
     }
 }

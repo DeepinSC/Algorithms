@@ -25,15 +25,12 @@ public class FastCollinearPoints {
     }
 
     private Point[] points;
-    private LineSegment[] segments;
+    private ArrayList<LineSegment> ls=new ArrayList<>();
 
     public FastCollinearPoints(Point[] points){
         checkPointsHaveNullOrDup(points);
         this.points = Arrays.copyOf(points,points.length);
         Collections.sort(Arrays.asList(this.points));
-        ArrayList<LineSegment> arrayList = new ArrayList<>();
-        ArrayList<Double> slopes = new ArrayList<>();
-        ArrayList<Point> endPoints = new ArrayList<>();
         ArrayList<String> lineStrSet = new ArrayList<>();
         for (int i = 0; i < this.points.length - 3;i++){
             Point p0 = this.points[i];
@@ -59,9 +56,8 @@ public class FastCollinearPoints {
                 if (slope != j_slope && count >= 4){
                     Point endPoint = remainP[j-1];
                     String lineStr = endPoint.toString()+','+slope;
-                    // StdOut.println(lineStr);
                     if (!lineStrSet.contains(lineStr)) {
-                        arrayList.add(new LineSegment(p0, endPoint));
+                        ls.add(new LineSegment(p0, endPoint));
                         lineStrSet.add(lineStr);
                     }
                     count = 2;
@@ -78,27 +74,19 @@ public class FastCollinearPoints {
                 Point endPoint = remainP[remainP.length - 1];
                 String lineStr = endPoint.toString()+','+slope;
                 // StdOut.println(lineStr);
-                if (!endPoints.contains(endPoint) || !slopes.contains(slope)) {
-                    if (!lineStrSet.contains(lineStr)) {
-                        arrayList.add(new LineSegment(p0, endPoint));
-                        lineStrSet.add(lineStr);
-                    }
+                if (!lineStrSet.contains(lineStr)) {
+                    ls.add(new LineSegment(p0, endPoint));
+                    lineStrSet.add(lineStr);
                 }
             }
 
         }
-
-        LineSegment[] lineSegments = new LineSegment[arrayList.size()];
-        for (int i=0;i<arrayList.size();i++){
-            lineSegments[i] = arrayList.get(i);
-        }
-        this.segments = lineSegments;
     }     // finds all line segments containing 4 or more points
     public int numberOfSegments(){
-        return this.segments.length;
+        return this.ls.size();
     } // the number of line segments
 
     public LineSegment[] segments(){
-        return this.segments;
+        return ls.toArray(new LineSegment[ls.size()]);
     }
 }
