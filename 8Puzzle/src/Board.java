@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.LinkedQueue;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -6,7 +7,7 @@ public class Board {
 
     private int n;
     private int[][] tiles;
-    private MinPQ<Board> pq;
+
 
     public Board(int[][] blocks){
         this.n = blocks.length;
@@ -92,7 +93,61 @@ public class Board {
     } // does this board equal y?
     public Iterable<Board> neighbors(){
         // todo：改成普通队列，用0元素和周围的进行交换。
-        return pq;
+        LinkedQueue<Board> queue = new LinkedQueue<>();
+        int zero_i = -1;
+        int zero_j = -1;
+
+        // find zero
+        for (int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if (tiles[i][j] == 0) {
+                    zero_i = i;
+                    zero_j = j;
+                    break;
+                }
+            }
+            if (zero_i!=-1){
+                break;
+            }
+        }
+
+        // 如果上边可换
+        if (zero_i > 0){
+            Board board_up = new Board(this.tiles);
+            int up = board_up.tiles[zero_i-1][zero_j];
+            board_up.tiles[zero_i-1][zero_j] = 0;
+            board_up.tiles[zero_i][zero_j] = up;
+            queue.enqueue(board_up);
+        }
+
+        // 如果下面可换
+        if (zero_i < n){
+            Board board_bottom = new Board(this.tiles);
+            int bottom = board_bottom.tiles[zero_i+1][zero_j];
+            board_bottom.tiles[zero_i+1][zero_j] = 0;
+            board_bottom.tiles[zero_i][zero_j] = bottom;
+            queue.enqueue(board_bottom);
+        }
+
+        // 如果左面可换
+        if (zero_j > 0){
+            Board board_left = new Board(this.tiles);
+            int left = board_left.tiles[zero_i][zero_j-1];
+            board_left.tiles[zero_i][zero_j-1] = 0;
+            board_left.tiles[zero_i][zero_j] = left;
+            queue.enqueue(board_left);
+        }
+
+        // 如果右面可换
+        if (zero_j < n){
+            Board board_right = new Board(this.tiles);
+            int right = board_right.tiles[zero_i][zero_j+1];
+            board_right.tiles[zero_i][zero_j+1] = 0;
+            board_right.tiles[zero_i][zero_j] = right;
+            queue.enqueue(board_right);
+        }
+
+        return queue;
     }// all neighboring boards
     @Override
     public String toString() {
@@ -125,7 +180,11 @@ public class Board {
             StdOut.println(initial);
             StdOut.println(initial.hamming());
             StdOut.println(initial.manhattan());
-            StdOut.println(initial.twin());
+            // StdOut.println(initial.twin());
+            Iterable<Board> iter = initial.neighbors();
+            for (Board e:iter){
+                StdOut.println(e);
+            }
         }
     }// unit tests (not graded)
 }
