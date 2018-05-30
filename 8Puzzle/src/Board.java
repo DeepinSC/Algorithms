@@ -3,6 +3,8 @@ import edu.princeton.cs.algs4.LinkedQueue;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.Arrays;
+
 public class Board {
 
     private int n;
@@ -11,11 +13,9 @@ public class Board {
 
     public Board(int[][] blocks){
         this.n = blocks.length;
-        tiles = new int[n][n];
-        for (int i=0;i<blocks.length;i++){
-            for(int j=0;j<blocks[0].length;j++){
-                tiles[i][j] = blocks[i][j];
-            }
+        this.tiles = new int[n][];
+        for (int i=0; i<n; i++){
+            this.tiles[i] = Arrays.copyOf(blocks[i], n);
         }
     } // construct a board from an n-by-n array of blocks
       // (where blocks[i][j] = block in row i, column j)
@@ -45,8 +45,10 @@ public class Board {
                     continue;
                 }
                 if(tiles[i][j] != i*n+j+1){
-                    int rowDis = Math.abs(i - tiles[i][j]/n);
-                    int colDis = Math.abs(j - tiles[i][j]%n);
+                    int rowDis = Math.abs(i - (tiles[i][j]-1)/n);
+                    int colDis = Math.abs(j - (tiles[i][j]-1)%n);
+                    //StdOut.println(tiles[i][j]+","+i+","+j);
+                    //StdOut.println(rowDis+" "+colDis);
                     count+= rowDis + colDis;
                 }
             }
@@ -59,11 +61,14 @@ public class Board {
     public Board twin(){
         Board result = new Board(this.tiles);
 
-        int pre_i = 0;
-        int pre_j = 0;
-        for (int i=1;i<n;i++){
+        int pre_i = -1;
+        int pre_j = -1;
+        for (int i=0;i<n;i++){
             for(int j=0;j<n;j++) {
-                if (result.tiles[pre_i][pre_j] == 0){
+                if (result.tiles[i][j]==0){
+                    continue;
+                }
+                if (pre_i == -1 && result.tiles[i][j] != 0){
                     pre_i = i;
                     pre_j = j;
                     continue;
@@ -82,6 +87,14 @@ public class Board {
         if (y == null) { return false; }
         if (y.getClass() != this.getClass()) { return false; }
         Board that = (Board) y;
+        if(this.n!=that.n){
+            return false;
+        }
+        else{
+            if(this.tiles[0].length!=that.tiles[0].length){
+                return false;
+            }
+        }
         for (int i=0;i<n;i++){
             for(int j=0;j<n;j++) {
                 if(this.tiles[i][j]!=that.tiles[i][j]){
@@ -121,7 +134,7 @@ public class Board {
         }
 
         // 如果下面可换
-        if (zero_i < n){
+        if (zero_i < n-1){
             Board board_bottom = new Board(this.tiles);
             int bottom = board_bottom.tiles[zero_i+1][zero_j];
             board_bottom.tiles[zero_i+1][zero_j] = 0;
@@ -139,7 +152,7 @@ public class Board {
         }
 
         // 如果右面可换
-        if (zero_j < n){
+        if (zero_j < n-1){
             Board board_right = new Board(this.tiles);
             int right = board_right.tiles[zero_i][zero_j+1];
             board_right.tiles[zero_i][zero_j+1] = 0;
@@ -177,13 +190,15 @@ public class Board {
 
             // solve the slider puzzle
             Board initial = new Board(tiles);
-            StdOut.println(initial);
+            StdOut.println(initial.isGoal());
             StdOut.println(initial.hamming());
-            StdOut.println(initial.manhattan());
-            // StdOut.println(initial.twin());
+            StdOut.println("manhattan: "+initial.manhattan());
+            StdOut.println(initial.twin());
+            StdOut.println(initial);
             Iterable<Board> iter = initial.neighbors();
             for (Board e:iter){
-                StdOut.println(e);
+                //StdOut.println("manhattan: "+e.manhattan());
+                // StdOut.println(e);
             }
         }
     }// unit tests (not graded)
