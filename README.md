@@ -1,4 +1,7 @@
 # Algorithms
+[![Build Status](https://www.travis-ci.org/DeepinSC/Algorithms.svg?branch=master)](https://www.travis-ci.org/DeepinSC/Algorithms)
+
+
 Coursera 普林算法课
 
 
