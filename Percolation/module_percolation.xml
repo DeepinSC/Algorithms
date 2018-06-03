@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_percolation" default="compile.module.percolation">
+  <dirname property="module.percolation.basedir" file="${ant.file.module_percolation}"/>
+  
+  <property name="module.jdk.home.percolation" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.percolation" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.percolation" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.percolation" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="percolation.output.dir" value="${module.percolation.basedir}/../out/production/Percolation"/>
+  <property name="percolation.testoutput.dir" value="${module.percolation.basedir}/../out/test/Percolation"/>
+  
+  <path id="percolation.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="percolation.module.production.classpath">
+    <path refid="${module.jdk.classpath.percolation}"/>
+    <pathelement location="${basedir}/algs4.jar"/>
+  </path>
+  
+  <path id="percolation.runtime.production.module.classpath">
+    <pathelement location="${percolation.output.dir}"/>
+    <pathelement location="${basedir}/algs4.jar"/>
+  </path>
+  
+  <path id="percolation.module.classpath">
+    <path refid="${module.jdk.classpath.percolation}"/>
+    <pathelement location="${percolation.output.dir}"/>
+    <pathelement location="${basedir}/algs4.jar"/>
+  </path>
+  
+  <path id="percolation.runtime.module.classpath">
+    <pathelement location="${percolation.testoutput.dir}"/>
+    <pathelement location="${percolation.output.dir}"/>
+    <pathelement location="${basedir}/algs4.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.percolation">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.percolation">
+    <patternset refid="excluded.from.module.percolation"/>
+  </patternset>
+  
+  <path id="percolation.module.sourcepath">
+    <dirset dir="${module.percolation.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.percolation" depends="compile.module.percolation.production,compile.module.percolation.tests" description="Compile module Percolation"/>
+  
+  <target name="compile.module.percolation.production" depends="register.custom.compilers" description="Compile module Percolation; production classes">
+    <mkdir dir="${percolation.output.dir}"/>
+    <javac2 destdir="${percolation.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.percolation}/javac">
+      <compilerarg line="${compiler.args.percolation}"/>
+      <bootclasspath refid="percolation.module.bootclasspath"/>
+      <classpath refid="percolation.module.production.classpath"/>
+      <src refid="percolation.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.percolation"/>
+    </javac2>
+    
+    <copy todir="${percolation.output.dir}">
+      <fileset dir="${module.percolation.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.percolation.tests" depends="register.custom.compilers,compile.module.percolation.production" description="compile module Percolation; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.percolation" description="cleanup module">
+    <delete dir="${percolation.output.dir}"/>
+    <delete dir="${percolation.testoutput.dir}"/>
+  </target>
+</project>
